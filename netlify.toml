@@ -1,0 +1,14 @@
+[build]
+  command = "npm install"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+[build.environment]
+  NODE_VERSION = "18"
+[[redirects]]
+  force = true
+  from = "/api/*"
+  status = 200
+  to = "/.netlify/functions/api/:splat"

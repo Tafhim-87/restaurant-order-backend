@@ -7,15 +7,21 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "build": "netlify deploy --prod"
   },
   "dependencies": {
+    "@netlify/functions": "^4.2.5",
+    "@types/express": "^5.0.3",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.17.1",
     "multer": "^2.0.2",
-    "nodemon": "^3.1.10"
+    "netlify-cli": "^23.5.0",
+    "netlify-lambda": "^2.0.16",
+    "nodemon": "^3.1.10",
+    "serverless-http": "^4.0.0"
   }
 }
