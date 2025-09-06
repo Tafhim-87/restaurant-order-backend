@@ -62,17 +62,25 @@ const checkOverdueDeletions = async () => {
   }
 };
 
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({ message: 'No token provided' });
+
+  const token = authHeader.split(' ')[1];
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ message: 'Invalid or expired token' });
+    req.user = user;
+    next();
+  });
+};
+
 // Run overdue deletion check every 5 minutes
 setInterval(checkOverdueDeletions, 5 * 60 * 1000);
 
 // Run once on server start
 checkOverdueDeletions();
 
-router.get("/", async (req, res) => {
-  // const token = req.headers.authorization?.split(" ")[1];
-  // if (!token) {
-  //   return res.status(401).json({ message: "No token provided" });
-  // }
+router.get("/", authenticateToken, async (req, res) => {
   try {
     const payments = await PaymentDB.find();
     res.status(200).json(payments);   // <-- return array directly

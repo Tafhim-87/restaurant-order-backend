@@ -7,7 +7,7 @@ dotenv.config();
 
 
 const adminEmail = "abc@gmail.com"
-const adminPassword = "admin123"
+const adminPassword = "123"
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
 
 router.get('/signin', (req, res) => {
