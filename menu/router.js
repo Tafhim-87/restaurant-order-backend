@@ -1,44 +1,35 @@
 const express = require('express');
-const multer = require('multer');
 const dotenv = require('dotenv');
 const MenuDB = require('../model/menu.schema.js');
 
 dotenv.config();
 const router = express.Router();
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, './uploads');
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  }
-});
 
-const upload = multer({ storage });
+
 
 // POST /menu/upload - Create a new menu item
-router.post('/upload', upload.single('image'), async (req, res) => {
+router.post('/upload', async (req, res) => {
   try {
-    // Check if at least one of image or imagepath is provided
-    if (!req.file && !req.body.imagepath) {
-      return res.status(400).json({ message: 'At least one of image or imagepath is required' });
+    const { name, price, category, description, imagepath } = req.body;
+
+    if (!name || !price || !category) {
+      return res.status(400).json({ message: "Name, price, and category are required" });
     }
 
-    const menuItem = new MenuDB({
-      name: req.body.name,
-      price: req.body.price,
-      category: req.body.category,
-      description: req.body.description,
-      image: req.file ? req.file.path : undefined,
-      imagepath: req.body.imagepath || undefined,
+    const newMenuItem = new MenuDB({
+      name,
+      price,
+      category,
+      description: description || "Delicious dish!",
+      imagepath: imagepath || "https://example.com/default-image.jpg"
     });
 
-    await menuItem.save();
-    res.status(201).json({ message: 'Menu item created successfully', item: menuItem });
+    const savedItem = await newMenuItem.save();
+    res.status(201).json(savedItem);
   } catch (error) {
-    console.error('Error creating menu item:', error);
-    res.status(500).json({ message: 'Failed to create menu item', error: error.message });
+    console.error("Error creating menu item:", error);
+    res.status(500).json({ message: "Failed to create menu item", error: error.message });
   }
 });
 
